@@ -1,12 +1,14 @@
-// app/items/[id]/page.tsx
-import { PlantItem } from "../page";
+import { prisma } from "@/lib/prisma";
+import type { Plant } from "@/generated/prisma/client";
 
 type Props = { params: Promise<{ id: string }> };
 
-async function getItem(id: string): Promise<PlantItem> {
-  const response = await fetch(`http://localhost:3000/api/items`, { cache: "no-store" });
-  const items: PlantItem[] = await response.json();
-  return items.find(item => item.id === Number(id))!;
+async function getItem(id: string): Promise<Plant> {
+  const plant = await prisma.plant.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!plant) throw new Error(`Plant with id ${id} not found`);
+  return plant;
 }
 
 export default async function ItemDetailPage({ params }: Props) {

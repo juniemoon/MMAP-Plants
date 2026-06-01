@@ -1,21 +1,10 @@
+import { prisma } from "@/lib/prisma";
 import SearchBar from "../src/components/SearchBar";
 import Link from "next/link";
+import type { Plant } from "@/generated/prisma/client";
 
-export type PlantStatus = "healthy" | "thirsty" | "needs-sunlight" | "unknown";
-export type PlantItem = {
-  id: number;
-  name: string;
-  image?: string;
-  status: PlantStatus;
-  location: string;
-  watering: string;
-  sunlight: string;
-  humidity: number;
-};
-
-async function getItems(): Promise<PlantItem[]> {
-  const response = await fetch("http://localhost:3000/api/items", { cache: "no-store" });
-  return response.json() as Promise<PlantItem[]>;
+async function getItems(): Promise<Plant[]> {
+  return prisma.plant.findMany();
 }
 
 export default async function ItemsPage() {

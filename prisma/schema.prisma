@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Plant {
+  id           Int    @id @default(autoincrement())
+  name         String
+  image        String @default("/placeholder.jpg")
+  status       String @default("unknown")
+  location     String
+  watering     String?
+  sunlight     String?
+  humidity     Int?
+  wateringLogs WateringLog[]
+}
+
+model WateringLog {
+  id          Int      @id @default(autoincrement())
+  plantId     Int
+  plant       Plant    @relation(fields: [plantId], references: [id])
+  wateredAt   DateTime @default(now())
+  waterAmount Int?
+  note        String?
+}
