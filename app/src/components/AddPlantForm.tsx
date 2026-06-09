@@ -55,8 +55,8 @@ export default function AddPlantForm() {
             </SelectContent>
           </Select>
           <div className="flex justify-end gap-3 mt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Abbrechen</Button>
-            <Button type="submit" className="bg-lime-500 hover:bg-lime-600 text-white">Speichern</Button>
+            <Button type="button" variant="ghost" className="text-zinc-700 hover:text-black" onClick={() => setOpen(false)}>Abbrechen</Button>
+            <Button type="submit" variant="default" className="bg-lime-300 hover:bg-lime-400 text-zinc-700 hover:text-black">Speichern</Button>
           </div>
         </form>
       </DialogContent>

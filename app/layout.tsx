@@ -23,10 +23,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="de" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         <main className="flex flex-1 w-full max-w-3xl mx-auto flex-col bg-white">
-          <nav className="bg-lime-100 h-12 flex items-center px-8 gap-6">
-            <Link href="/" className="text-zinc-700 font-medium hover:bg-lime-200">Home</Link>
-            <Link href="/about" className="text-zinc-700 font-medium hover:bg-lime-200">About</Link>
-            <Link href="/items" className="text-zinc-700 font-medium hover:bg-lime-200">Plants</Link>
+          <nav className="bg-lime-200 h-12 flex items-center px-8 gap-6">
+            <Link href="/" className="text-zinc-700 font-medium hover:bg-lime-300">Home</Link>
+            <Link href="/about" className="text-zinc-700 font-medium hover:bg-lime-300">About</Link>
+            <Link href="/items" className="text-zinc-700 font-medium hover:bg-lime-300">Plants</Link>
           </nav>
           <div className="flex flex-col flex-1 py-8 px-8">
             {children}
