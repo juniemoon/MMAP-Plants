@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
 import { createPlant } from "@/app/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 
 export default function AddPlantForm() {
   const [open, setOpen] = useState(false);
@@ -21,33 +26,40 @@ export default function AddPlantForm() {
     setOpen(false);
   }
 
-  if (!open) return (
-    <button onClick={() => setOpen(true)}
-      className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-lime-200 px-5 text-zinc-700 shadow-xs transition-colors hover:bg-lime-300 md:w-[240px] cursor-pointer whitespace-nowrap">
-      + Neue Pflanze hinzufügen
-    </button>
-  );
-
   return (
-    <div className="bg-foreground rounded-lg p-4 flex flex-col gap-3">
-      <h2 className="font-semibold text-zinc-700">Neue Pflanze</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2 text-zinc-600">
-        <input required name="name" placeholder="Name" className="border rounded px-3 py-1.5 text-sm focus:outline-none" />
-        <input required name="location" placeholder="Standort" className="border rounded px-3 py-1.5 text-sm focus:outline-none" />
-        <input required name="watering" placeholder="Gießen (z.B. alle 7 Tage)" className="border rounded px-3 py-1.5 text-sm focus:outline-none" />
-        <input required name="sunlight" placeholder="Licht" className="border rounded px-3 py-1.5 text-sm focus:outline-none" />
-        <input required name="humidity" type="number" placeholder="Luftfeuchtigkeit (%)" className="border rounded px-3 py-1.5 text-sm focus:outline-none" />
-        <select name="status" className="border rounded px-3 py-1.5 text-sm focus:outline-none">
-          <option value="unknown">Unbekannt</option>
-          <option value="healthy">Gesund</option>
-          <option value="thirsty">Durstig</option>
-          <option value="needs-sunlight">Braucht Sonne</option>
-        </select>
-        <div className="flex gap-2 mt-1">
-          <button type="submit" className="bg-lime-300 rounded px-4 py-1.5 text-sm font-medium hover:bg-lime-400">Speichern</button>
-          <button type="button" onClick={() => setOpen(false)} className="text-sm text-zinc-400 hover:text-black">Abbrechen</button>
-        </div>
-      </form>
-    </div>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="rounded-full bg-lime-200 hover:bg-lime-300 text-zinc-700 h-12 px-6 cursor-pointer">
+          <Plus className="mr-2 h-5 w-5" /> Neue Pflanze hinzufügen
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Neue Pflanze hinzufügen</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-4">
+          <Input required name="name" placeholder="Name der Pflanze" />
+          <Input required name="location" placeholder="Standort (z.B. Wohnzimmer)" />
+          <Input required name="watering" placeholder="Gießen (z.B. alle 7 Tage)" />
+          <Input required name="sunlight" placeholder="Lichtbedarf" />
+          <Input required name="humidity" type="number" placeholder="Luftfeuchtigkeit (%)" />
+          <Select name="status" defaultValue="unknown">
+            <SelectTrigger>
+              <SelectValue placeholder="Status wählen" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unknown">Unbekannt</SelectItem>
+              <SelectItem value="healthy">Gesund</SelectItem>
+              <SelectItem value="thirsty">Durstig</SelectItem>
+              <SelectItem value="needs-sunlight">Braucht Sonne</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="flex justify-end gap-3 mt-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Abbrechen</Button>
+            <Button type="submit" className="bg-lime-500 hover:bg-lime-600 text-white">Speichern</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
