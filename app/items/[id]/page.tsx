@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { getPlant } from "@/app/actions";
+import AddWateringLogForm from "@/app/src/components/AddWateringLogForm";
+import WateringLogEntry from "@/app/src/components/WateringLogEntry";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -24,18 +26,15 @@ export default async function PlantDetailPage({ params }: Props) {
           <p><span className="font-semibold">Status:</span> {plant.status}</p>
         </div>
       </div>
+
+      <AddWateringLogForm plantId={plant.id} />
+
       {plant.wateringLogs.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-black mb-2">Gießprotokoll</h2>
           <div className="flex flex-col gap-2">
             {plant.wateringLogs.map((log) => (
-              <div key={log.id} className="border rounded px-3 py-2 text-sm text-zinc-700">
-                <p>
-                  <span className="font-semibold">Datum:</span> {new Date(log.wateredAt).toLocaleString("de-DE")}
-                  {log.waterAmount !== null && <span> · <span className="font-semibold">Menge:</span> {log.waterAmount} ml</span>}
-                </p>
-                {log.note && <p><span className="font-semibold">Notiz:</span> {log.note}</p>}
-              </div>
+              <WateringLogEntry key={log.id} log={log} />
             ))}
           </div>
         </div>

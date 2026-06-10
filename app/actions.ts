@@ -50,3 +50,22 @@ export async function deletePlant(id: number) {
   await prisma.plant.delete({ where: { id } });
   revalidatePath("/items");
 }
+
+export async function addWateringLog(plantId: number, waterAmount?: number, note?: string) {
+  await prisma.wateringLog.create({
+    data: {
+      plantId,
+      waterAmount,
+      note,
+    },
+  });
+  revalidatePath(`/items/${plantId}`);
+}
+
+export async function updateWateringLog(id: number, waterAmount?: number, note?: string) {
+  const log = await prisma.wateringLog.update({
+    where: { id },
+    data: { waterAmount, note },
+  });
+  revalidatePath(`/items/${log.plantId}`);
+}
