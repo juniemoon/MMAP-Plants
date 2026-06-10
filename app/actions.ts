@@ -5,7 +5,9 @@ import { revalidatePath } from "next/cache";
 
 // READ: Alle Pflanzen laden
 export async function getAllPlants() {
-  return prisma.plant.findMany();
+  return prisma.plant.findMany({
+    include: { wateringLogs: { orderBy: { wateredAt: "desc" } } },
+  });
 }
 
 // READ: Einzelne Pflanze + zugehörige Watering Logs laden

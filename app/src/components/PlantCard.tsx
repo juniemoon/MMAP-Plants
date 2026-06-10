@@ -1,17 +1,36 @@
 "use client";
 import Link from "next/link";
 import { deletePlant, updatePlant } from "@/app/actions";
-import type { Plant } from "@/generated/prisma/client";
-import { useState } from "react";
+import type { Plant, WateringLog } from "@/generated/prisma/client";
+import { useState, useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Droplet } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
-export default function PlantCard({ item }: { item: Plant }) {
+export default function PlantCard({ item }: { item: Plant & { wateringLogs: WateringLog[] } }) {
   const [editing, setEditing] = useState(false);
+
+  const { isOverdue, daysOverdue } = useMemo(() => {
+    let isOverdue = false;
+    let daysOverdue = 0;
+
+    if (item.wateringMaxWeeks !== null && item.wateringMaxWeeks !== undefined && item.wateringLogs.length > 0) {
+      const lastWateringDate = new Date(item.wateringLogs[0].wateredAt);
+      const maxWateringIntervalDays = item.wateringMaxWeeks * 7;
+      const overdueThresholdDate = new Date(lastWateringDate.getTime() + maxWateringIntervalDays * 24 * 60 * 60 * 1000);
+      const now = new Date();
+
+      if (now > overdueThresholdDate) {
+        isOverdue = true;
+        daysOverdue = Math.floor((now.getTime() - overdueThresholdDate.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    }
+    return { isOverdue, daysOverdue };
+  }, [item.wateringMaxWeeks, item.wateringLogs]);
 
   async function handleDelete(e: React.MouseEvent) {
     e.preventDefault();
@@ -99,6 +118,17 @@ export default function PlantCard({ item }: { item: Plant }) {
 
   return (
     <Card className="relative overflow-hidden shadow-sm border">
+      {isOverdue && ( // isOverdue already checks for wateringLogs.length > 0
+        <div className="absolute top-3 right-4 group/badge z-10">
+          <div className="w-8 h-8 rounded-full bg-[#f7b013] flex items-center justify-center transition-all duration-300 cursor-help group-hover/badge:w-auto group-hover/badge:px-3 group-hover/badge:shadow-sm border border-amber-500/20">
+            <Droplet className="h-5 w-5 text-white group-hover/badge:hidden" />
+            <span className="hidden group-hover/badge:block text-white whitespace-nowrap text-xs font-medium">
+              Gießen seit {daysOverdue} Tagen überfällig
+            </span>
+          </div>
+        </div>
+      )}
+
       <Link href={`/items/${item.id}`} className="block group">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg text-zinc-700">{item.name}</CardTitle>

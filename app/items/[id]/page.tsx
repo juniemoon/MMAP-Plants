@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getPlant } from "@/app/actions";
 import AddWateringLogForm from "@/app/src/components/AddWateringLogForm";
+import { Droplet } from "lucide-react";
 import WateringLogEntry from "@/app/src/components/WateringLogEntry";
 
 type Props = { params: Promise<{ id: string }> };
@@ -13,8 +14,26 @@ export default async function PlantDetailPage({ params }: Props) {
     notFound();
   }
 
+  const { isOverdue, daysOverdue } = (() => {
+    let isOverdue = false;
+    let daysOverdue = 0;
+
+    if (plant.wateringMaxWeeks !== null && plant.wateringMaxWeeks !== undefined && plant.wateringLogs.length > 0) {
+      const lastWateringDate = new Date(plant.wateringLogs[0].wateredAt);
+      const maxWateringIntervalDays = plant.wateringMaxWeeks * 7;
+      const overdueThresholdDate = new Date(lastWateringDate.getTime() + maxWateringIntervalDays * 24 * 60 * 60 * 1000);
+      const now = new Date();
+
+      if (now > overdueThresholdDate) {
+        isOverdue = true;
+        daysOverdue = Math.floor((now.getTime() - overdueThresholdDate.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    }
+    return { isOverdue, daysOverdue };
+  })();
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 text-zinc-700">
       <h1 className="text-3xl font-semibold text-black">{plant.name}</h1>
       <div className="flex gap-8 plants-start">
         <img src={plant.image} alt={plant.name} className="w-48 h-64 object-contain" />
@@ -26,6 +45,12 @@ export default async function PlantDetailPage({ params }: Props) {
           <p><span className="font-semibold">Status:</span> {plant.status}</p>
         </div>
       </div>
+
+      {isOverdue && (
+        <div className="bg-[#f7b013] text-white px-4 py-2 rounded-lg flex items-center gap-2 self-start font-medium">
+          <Droplet className="h-5 w-5 text-white" /> Gießen seit {daysOverdue} Tagen überfällig
+        </div>
+      )}
 
       <AddWateringLogForm plantId={plant.id} />
 
