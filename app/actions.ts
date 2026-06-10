@@ -17,9 +17,9 @@ export async function getPlant(id: number) {
 }
 
 // CREATE: Neue Pflanze erstellen
-export async function createPlant(name: string, location: string, status: string, watering: string, sunlight: string, humidity: number, image?: string, ) {
+export async function createPlant(name: string, location: string, status: string, wateringMinWeeks: number, wateringMaxWeeks: number,sunlight: string, humidity: number, image?: string, ) {
   await prisma.plant.create({
-    data: { name, location, status, watering, sunlight, humidity, image },
+    data: { name, location, status, wateringMinWeeks, wateringMaxWeeks, sunlight, humidity, image },
   });
   revalidatePath("/items"); // Seite aktualisieren!
 }
@@ -30,14 +30,15 @@ export async function updatePlant(
   name: string,
   location: string,
   status: string,
-  watering: string,
+  wateringMinWeeks: number,
+  wateringMaxWeeks: number,
   sunlight: string,
   humidity: number,
   image?: string,
 ) {
   await prisma.plant.update({
     where: { id },
-    data: { name, location, status, watering, sunlight, humidity, image },
+    data: { name, location, status, wateringMinWeeks, wateringMaxWeeks, sunlight, humidity, image },
   });
   revalidatePath("/items");
   revalidatePath(`/items/${id}`);

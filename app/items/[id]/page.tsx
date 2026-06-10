@@ -18,7 +18,7 @@ export default async function PlantDetailPage({ params }: Props) {
         <img src={plant.image} alt={plant.name} className="w-48 h-64 object-contain" />
         <div className="flex flex-col gap-3 text-zinc-700">
           <p><span className="font-semibold">Standort:</span> {plant.location}</p>
-          <p><span className="font-semibold">Gießen:</span> {plant.watering}</p>
+          <p><span className="font-semibold">Gießen: </span><p className="inline">Alle {plant.wateringMinWeeks} bis {plant.wateringMaxWeeks} Wochen</p></p>
           <p><span className="font-semibold">Licht:</span> {plant.sunlight}</p>
           <p><span className="font-semibold">Luftfeuchtigkeit:</span> {plant.humidity}%</p>
           <p><span className="font-semibold">Status:</span> {plant.status}</p>

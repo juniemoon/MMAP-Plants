@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil, Trash2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 export default function PlantCard({ item }: { item: Plant }) {
   const [editing, setEditing] = useState(false);
@@ -28,7 +29,8 @@ export default function PlantCard({ item }: { item: Plant }) {
       data.get("name") as string,
       data.get("location") as string,
       status,
-      data.get("watering") as string,
+      Number(data.get("wateringMinWeeks") || 1),
+      Number(data.get("wateringMaxWeeks") || 2),
       data.get("sunlight") as string,
       Number(data.get("humidity")),
       item.image ?? undefined,
@@ -39,12 +41,43 @@ export default function PlantCard({ item }: { item: Plant }) {
   if (editing) return (
     <Card className="p-4 shadow-sm border">
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 text-zinc-700">
-        <Input required name="name" defaultValue={item.name} placeholder="Name" />
-        <Input required name="location" defaultValue={item.location ?? ""} placeholder="Standort" />
-        <Input required name="watering" defaultValue={item.watering ?? ""} placeholder="Gießen" />
-        <Input required name="sunlight" defaultValue={item.sunlight ?? ""} placeholder="Licht" />
-        <Input required name="humidity" type="number" defaultValue={item.humidity ?? 50} placeholder="Luftfeuchtigkeit (%)" />
-        <input type="hidden" name="status" defaultValue={item.status} />
+        <Input required name="name" defaultValue={item.name} placeholder="Name"/>
+        <Input required name="location" defaultValue={item.location || ""} placeholder="Standort"/>
+
+        <div className="flex flex-wrap items-center gap-2 pl-2">
+          <Label htmlFor="wateringMinWeeks" className="whitespace-nowrap">
+            Gießen: Alle
+          </Label>
+          <Select name="wateringMinWeeks" defaultValue={item.wateringMinWeeks?.toString() || "1"}>
+            <SelectTrigger className="w-auto">
+              <SelectValue placeholder="Min" />
+            </SelectTrigger>
+            <SelectContent>
+              {[1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8].map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="whitespace-nowrap">bis</span>
+          <Select name="wateringMaxWeeks" defaultValue={item.wateringMaxWeeks?.toString() || "2"}>
+            <SelectTrigger className="w-auto">
+              <SelectValue placeholder="Max" />
+            </SelectTrigger>
+            <SelectContent>
+              {[1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8].map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="whitespace-nowrap">Wochen</span>
+        </div>
+
+        <Input required name="sunlight" defaultValue={item.sunlight ?? ""} placeholder="Licht"/>
+        <Input required name="humidity" type="number" defaultValue={item.humidity ?? 50} placeholder="Luftfeuchtigkeit (%)" className="w-20 self-start" />
         <Select name="status" defaultValue={item.status}>
           <SelectTrigger>
             <SelectValue placeholder="Status wählen" />
@@ -56,7 +89,7 @@ export default function PlantCard({ item }: { item: Plant }) {
             <SelectItem value="needs-sunlight">Braucht Sonne</SelectItem>
           </SelectContent>
         </Select>
-        <div className="flex gap-2 mt-1">
+        <div className="flex gap-2 mt-8 justify-end">
           <Button type="submit" variant="default" className="bg-lime-300 hover:bg-lime-400 text-zinc-700 hover:text-black">Speichern</Button>
           <Button type="button" variant="ghost" className="text-zinc-700 hover:text-black" onClick={() => setEditing(false)}>Abbrechen</Button>
         </div>
@@ -70,9 +103,14 @@ export default function PlantCard({ item }: { item: Plant }) {
         <CardHeader className="pb-2">
           <CardTitle className="text-lg text-zinc-700">{item.name}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <img src={item.image ?? undefined} alt={item.name} className="w-full h-48 object-contain transition-transform group-hover:scale-105" />
+        <CardContent className="relative">
+          <img src={item.image || undefined} alt={item.name} className="w-full h-48 object-contain transition-transform group-hover:scale-105" />
           <p className="text-sm text-muted-foreground mt-2">{item.location}</p>
+          {item.wateringMinWeeks && item.wateringMaxWeeks && (
+            <p className="text-xs text-muted-foreground">
+              Gießen: Alle {item.wateringMinWeeks} bis {item.wateringMaxWeeks} Wochen
+            </p>
+          )}
         </CardContent>
       </Link>
       <CardFooter className="flex justify-end gap-2 items-center">
