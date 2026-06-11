@@ -10,6 +10,8 @@ import { Plus } from "lucide-react";
 
 export default function AddPlantForm() {
   const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState("unknown");
+  const [illness, setIllness] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,8 +25,11 @@ export default function AddPlantForm() {
       Number(data.get("wateringMaxWeeks")),
       data.get("sunlight") as string,
       Number(data.get("humidity")),
+      undefined, // Image placeholder
+      status === "healthy" ? "" : illness
     );
     form.reset();
+    setIllness("");
     setOpen(false);
   }
 
@@ -75,7 +80,10 @@ export default function AddPlantForm() {
 
           <Input required name="sunlight" placeholder="Lichtbedarf" />
           <Input required name="humidity" type="number" placeholder="Luftfeuchtigkeit (%)" />
-          <Select name="status" defaultValue="unknown">
+          <Select name="status" value={status} onValueChange={(val) => {
+            setStatus(val);
+            if (val === "healthy") setIllness("");
+          }}>
             <SelectTrigger>
               <SelectValue placeholder="Status wählen" />
             </SelectTrigger>
@@ -87,6 +95,14 @@ export default function AddPlantForm() {
               <SelectItem value="critical">Kritisch</SelectItem>
             </SelectContent>
           </Select>
+          
+          <Input 
+            name="illness" 
+            placeholder="Krankheit / Schädlinge" 
+            value={illness}
+            onChange={(e) => setIllness(e.target.value)}
+            disabled={status === "healthy"}
+          />
           <div className="flex justify-end gap-3 mt-2">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Abbrechen</Button>
             <Button type="submit" variant="default">Speichern</Button>

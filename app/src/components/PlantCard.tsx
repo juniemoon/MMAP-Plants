@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 
 export default function PlantCard({ item }: { item: Plant & { wateringLogs: WateringLog[] } }) {
   const [editing, setEditing] = useState(false);
+  const [status, setStatus] = useState(item.status);
+  const [illness, setIllness] = useState(item.illness || "");
 
   const { isOverdue, daysOverdue } = useMemo(() => {
     let isOverdue = false;
@@ -42,7 +44,6 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const status = data.get("status") as string;
     await updatePlant(
       item.id,
       data.get("name") as string,
@@ -53,6 +54,7 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
       data.get("sunlight") as string,
       Number(data.get("humidity")),
       item.image ?? undefined,
+      status === "healthy" ? "" : illness
     );
     setEditing(false);
   }
@@ -97,7 +99,10 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
 
         <Input required name="sunlight" defaultValue={item.sunlight ?? ""} placeholder="Licht"/>
         <Input required name="humidity" type="number" defaultValue={item.humidity ?? 50} placeholder="Luftfeuchtigkeit (%)" className="w-20 self-start" />
-        <Select name="status" defaultValue={item.status}>
+        <Select name="status" value={status} onValueChange={(val) => {
+          setStatus(val);
+          if (val === "healthy") setIllness("");
+        }}>
           <SelectTrigger>
             <SelectValue placeholder="Status wählen" />
           </SelectTrigger>
@@ -109,6 +114,13 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
             <SelectItem value="critical">Kritisch</SelectItem>
           </SelectContent>
         </Select>
+        <Input 
+          name="illness" 
+          placeholder="Krankheit / Schädlinge" 
+          value={illness}
+          onChange={(e) => setIllness(e.target.value)}
+          disabled={status === "healthy"}
+        />
         <div className="flex gap-2 mt-8 justify-end">
           <Button type="button" variant="secondary" onClick={() => setEditing(false)}>Abbrechen</Button>
           <Button type="submit" variant="default">Speichern</Button>
@@ -118,19 +130,25 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
   );
 
   return (
-    <Card className="relative overflow-hidden shadow-sm border">
+    <Card className="relative overflow-hidden shadow-sm border group">
       {isOverdue && ( // isOverdue already checks for wateringLogs.length > 0
-        <div className="absolute top-3 right-4 group/badge z-10">
-          <div className="w-8 h-8 rounded-full bg-[#f7b013] flex items-center justify-center transition-all duration-300 cursor-help group-hover/badge:w-auto group-hover/badge:px-3 group-hover/badge:shadow-sm border border-amber-500/20">
-            <Droplet className="h-5 w-5 text-white group-hover/badge:hidden" />
-            <span className="hidden group-hover/badge:block text-white whitespace-nowrap text-xs font-medium">
-              Gießen seit {daysOverdue} Tagen überfällig
-            </span>
+        <div className="absolute top-3 right-4 z-10">
+          <div className="w-8 h-8 rounded-full bg-[#f7b013] flex items-center justify-center transition-all duration-300 cursor-help group-hover:w-auto group-hover:px-3 group-hover:shadow-sm border border-amber-500/20">
+            <Droplet className="h-5 w-5 text-white group-hover:hidden" />
+            {daysOverdue === 0 && (
+              <span className="hidden group-hover:block text-white whitespace-nowrap text-xs font-medium">Gießen heute fällig</span>
+            )}
+            {daysOverdue === 1 && (
+              <span className="hidden group-hover:block text-white whitespace-nowrap text-xs font-medium">Gießen seit 1 Tag überfällig</span>
+            )}
+            {daysOverdue > 1 && (
+              <span className="hidden group-hover:block text-white whitespace-nowrap text-xs font-medium">Gießen seit {daysOverdue} Tagen überfällig</span>
+            )}
           </div>
         </div>
       )}
 
-      <Link href={`/items/${item.id}`} className="block group">
+      <Link href={`/items/${item.id}`} className="block">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg text-zinc-700">{item.name}</CardTitle>
         </CardHeader>

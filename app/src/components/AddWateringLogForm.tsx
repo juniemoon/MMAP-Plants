@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { addWateringLog } from "@/app/actions";
 import { Button } from "@/components/ui/button";
@@ -15,16 +14,17 @@ export default function AddWateringLogForm({ plantId }: { plantId: number }) {
     const formData = new FormData(e.currentTarget);
     const waterAmountRaw = formData.get("waterAmount") as string;
     const waterAmount = waterAmountRaw ? Number(waterAmountRaw) : undefined;
-    const note = formData.get("note") as string;
-
-    await addWateringLog(plantId, waterAmount, note);
+    const note = formData.get("note") as string || undefined;
+    const wateredAtRaw = formData.get("wateredAt") as string;
+    const wateredAt = wateredAtRaw ? new Date(wateredAtRaw) : undefined;
+    await addWateringLog(plantId, waterAmount, note, wateredAt);
     setEditing(false);
   }
 
   if (!editing) {
     return (
-      <Button 
-        onClick={() => setEditing(true)} 
+      <Button
+        onClick={() => setEditing(true)}
         className="bg-blue-100 hover:bg-blue-200 text-blue-700 self-start cursor-pointer"
       >
         <Droplet className="mr-2 h-4 w-4" /> Pflanze gießen
@@ -38,6 +38,10 @@ export default function AddWateringLogForm({ plantId }: { plantId: number }) {
         <Droplet className="h-4 w-4 text-blue-500" /> Neue Bewässerung
       </h3>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="grid gap-1">
+          <Label htmlFor="wateredAt" className="text-xs text-zinc-500">Datum</Label>
+          <Input type="date" name="wateredAt" id="wateredAt" className="h-9 text-zinc-700" />
+        </div>
         <div className="grid gap-1">
           <Label htmlFor="waterAmount" className="text-xs text-zinc-500">Menge (ml)</Label>
           <Input type="number" name="waterAmount" id="waterAmount" placeholder="Optional: Menge in ml" className="h-9 focus-visible:ring-blue-400 text-zinc-700" />
