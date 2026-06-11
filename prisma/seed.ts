@@ -13,7 +13,8 @@ async function main() {
       image: "/monstera.jpg",
       status: "healthy",
       location: "Wohnzimmer",
-      watering: "alle 7 - 10 Tage",
+      wateringMinWeeks: 1,
+      wateringMaxWeeks: 1.5,
       sunlight: "indirektes Licht",
       humidity: 60,
     },
@@ -25,7 +26,8 @@ async function main() {
       image: "/bogenhanf.jpg",
       status: "healthy",
       location: "Schlafzimmer",
-      watering: "alle 3 - 4 Wochen",
+      wateringMinWeeks: 3,
+      wateringMaxWeeks: 4,
       sunlight: "sonnig bis indirektes Licht",
       humidity: 50,
     },
@@ -33,7 +35,7 @@ async function main() {
 
   const wateringLog1 = await prisma.wateringLog.create({
     data: {
-        plantId: plant1.id,  // ← autogenerierte id von plant1
+        plantId: plant1.id,
         waterAmount: 500,
         note: "Angießen nach dem Einpflanzen",
     },
