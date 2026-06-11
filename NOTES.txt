@@ -1,0 +1,26 @@
+==========
+NEXT TODOs
+==========
+
+
+
+====
+BUGS
+====
+
+
+
+=============
+MORE FEATURES
+=============
+
+- Bilder Upload (Dateisuche auf Gerät) beim Pflanze anlegen
+
+- änderbare Pflanzeninfos auf Detailpage
+
+- re-structuring, welche Infos in PlantCard und welche auf Detailpage geändert werden können
+
+- Felder "repotting" und "fertilize" ähnlich wie Watering overdue, auch errechnen   
+  und mit Badge/Warning anzeigen
+
+- funktionable Suche

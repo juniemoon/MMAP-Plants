@@ -32,6 +32,14 @@ export default async function PlantDetailPage({ params }: Props) {
     return { isOverdue, daysOverdue };
   })();
 
+  const statusLabels: Record<string, string> = {
+    unknown: "Unbekannt",
+    healthy: "Gesund",
+    sick: "Krank/Schädlinge",
+    recovering: "in Genesung",
+    critical: "Kritisch",
+  };
+
   return (
     <div className="flex flex-col gap-6 text-zinc-700">
       <h1 className="text-3xl font-semibold text-black">{plant.name}</h1>
@@ -42,13 +50,17 @@ export default async function PlantDetailPage({ params }: Props) {
           <p><span className="font-semibold">Gießen: </span><p className="inline">Alle {plant.wateringMinWeeks} bis {plant.wateringMaxWeeks} Wochen</p></p>
           <p><span className="font-semibold">Licht:</span> {plant.sunlight}</p>
           <p><span className="font-semibold">Luftfeuchtigkeit:</span> {plant.humidity}%</p>
-          <p><span className="font-semibold">Status:</span> {plant.status}</p>
+          <p><span className="font-semibold">Status:</span> {statusLabels[plant.status] ?? plant.status}</p>
+          <p><span className="font-semibold">Krankheit/Schädlinge:</span> {plant.illness || "keine"}</p>
         </div>
       </div>
 
       {isOverdue && (
         <div className="bg-[#f7b013] text-white px-4 py-2 rounded-lg flex items-center gap-2 self-start font-medium">
-          <Droplet className="h-5 w-5 text-white" /> Gießen seit {daysOverdue} Tagen überfällig
+          <Droplet className="h-5 w-5 text-white" /> 
+          {daysOverdue === 0 && ( <span>Gießen heute fällig</span> )}
+          {daysOverdue === 1 && ( <span>Gießen seit 1 Tag überfällig</span> )}
+          {daysOverdue > 1 && ( <span>Gießen seit {daysOverdue} Tagen überfällig</span> )}
         </div>
       )}
 
