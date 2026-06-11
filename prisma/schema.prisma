@@ -8,16 +8,19 @@ datasource db {
 }
 
 model Plant {
-  id           Int    @id @default(autoincrement())
-  name         String
-  image        String @default("/placeholder.jpg")
-  status       String @default("unknown")
-  location     String
+  id               Int    @id @default(autoincrement())
+  name             String
+  image            String @default("/placeholder.jpg")
+  status           String @default("unknown")
+  illness          String?
+  location         String
   wateringMinWeeks Float?
   wateringMaxWeeks Float?
-  sunlight     String?
-  humidity     Int?
-  wateringLogs WateringLog[]
+  sunlight         String?
+  humidity         Int?
+  wateringLogs     WateringLog[]
+  fertilizingLogs  FertilizingLog[]
+  repottingLogs    RepottingLog[]
 }
 
 model WateringLog {
@@ -27,4 +30,26 @@ model WateringLog {
   wateredAt   DateTime @default(now())
   waterAmount Int?
   note        String?
+}
+
+model FertilizingLog {
+  id             Int      @id @default(autoincrement())
+  plantId        Int
+  plant          Plant    @relation(fields: [plantId], references: [id])
+  fertilizedAt   DateTime @default(now())
+  fertilizerType String?
+  amount         String?
+  note           String?
+}
+
+model RepottingLog {
+  id             Int      @id @default(autoincrement())
+  plantId        Int
+  plant          Plant    @relation(fields: [plantId], references: [id])
+  repottedAt     DateTime @default(now())
+  soilType       String?
+  oldPotSize     Int?
+  newPotSize     Int?
+  plantDivided   Boolean?
+  note           String?
 }

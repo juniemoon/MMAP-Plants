@@ -32,6 +32,14 @@ export default async function PlantDetailPage({ params }: Props) {
     return { isOverdue, daysOverdue };
   })();
 
+  const statusLabels: Record<string, string> = {
+    unknown: "Unbekannt",
+    healthy: "Gesund",
+    sick: "Krank/Schädlinge",
+    recovering: "in Genesung",
+    critical: "Kritisch",
+  };
+
   return (
     <div className="flex flex-col gap-6 text-zinc-700">
       <h1 className="text-3xl font-semibold text-black">{plant.name}</h1>
@@ -42,7 +50,8 @@ export default async function PlantDetailPage({ params }: Props) {
           <p><span className="font-semibold">Gießen: </span><p className="inline">Alle {plant.wateringMinWeeks} bis {plant.wateringMaxWeeks} Wochen</p></p>
           <p><span className="font-semibold">Licht:</span> {plant.sunlight}</p>
           <p><span className="font-semibold">Luftfeuchtigkeit:</span> {plant.humidity}%</p>
-          <p><span className="font-semibold">Status:</span> {plant.status}</p>
+          <p><span className="font-semibold">Status:</span> {statusLabels[plant.status] ?? plant.status}</p>
+          <p><span className="font-semibold">Krankheit/Schädlinge:</span> {plant.illness || "keine"}</p>
         </div>
       </div>
 
