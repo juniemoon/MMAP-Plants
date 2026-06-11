@@ -23,7 +23,7 @@ async function main() {
     data: {
       name: "Bogenhanf",
       image: "/bogenhanf.jpg",
-      status: "thirsty",
+      status: "healthy",
       location: "Schlafzimmer",
       watering: "alle 3 - 4 Wochen",
       sunlight: "sonnig bis indirektes Licht",

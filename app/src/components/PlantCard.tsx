@@ -104,8 +104,9 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
           <SelectContent>
             <SelectItem value="unknown">Unbekannt</SelectItem>
             <SelectItem value="healthy">Gesund</SelectItem>
-            <SelectItem value="thirsty">Durstig</SelectItem>
-            <SelectItem value="needs-sunlight">Braucht Sonne</SelectItem>
+            <SelectItem value="sick">Krank/Schädlinge</SelectItem>
+            <SelectItem value="recovering">in Genesung</SelectItem>
+            <SelectItem value="critical">Kritisch</SelectItem>
           </SelectContent>
         </Select>
         <div className="flex gap-2 mt-8 justify-end">

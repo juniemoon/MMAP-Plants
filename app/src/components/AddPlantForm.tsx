@@ -82,8 +82,9 @@ export default function AddPlantForm() {
             <SelectContent>
               <SelectItem value="unknown">Unbekannt</SelectItem>
               <SelectItem value="healthy">Gesund</SelectItem>
-              <SelectItem value="thirsty">Durstig</SelectItem>
-              <SelectItem value="needs-sunlight">Braucht Sonne</SelectItem>
+              <SelectItem value="sick">Krank/Schädlinge</SelectItem>
+              <SelectItem value="recovering">in Genesung</SelectItem>
+              <SelectItem value="critical">Kritisch</SelectItem>
             </SelectContent>
           </Select>
           <div className="flex justify-end gap-3 mt-2">
