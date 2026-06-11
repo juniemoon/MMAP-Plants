@@ -31,7 +31,7 @@ export default function AddPlantForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full bg-lime-200 hover:bg-lime-300 text-zinc-700 h-12 px-6 cursor-pointer">
+        <Button className="rounded-full bg-lime-200 hover:bg-lime-300 text-zinc-700 h-12 px-6">
           <Plus className="mr-2 h-5 w-5" /> Neue Pflanze hinzufügen
         </Button>
       </DialogTrigger>
@@ -87,8 +87,8 @@ export default function AddPlantForm() {
             </SelectContent>
           </Select>
           <div className="flex justify-end gap-3 mt-2">
-            <Button type="button" variant="ghost" className="text-zinc-700 hover:text-black" onClick={() => setOpen(false)}>Abbrechen</Button>
-            <Button type="submit" variant="default" className="bg-lime-300 hover:bg-lime-400 text-zinc-700 hover:text-black">Speichern</Button>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Abbrechen</Button>
+            <Button type="submit" variant="default">Speichern</Button>
           </div>
         </form>
       </DialogContent>

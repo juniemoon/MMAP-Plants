@@ -109,8 +109,8 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
           </SelectContent>
         </Select>
         <div className="flex gap-2 mt-8 justify-end">
-          <Button type="submit" variant="default" className="bg-lime-300 hover:bg-lime-400 text-zinc-700 hover:text-black">Speichern</Button>
-          <Button type="button" variant="ghost" className="text-zinc-700 hover:text-black" onClick={() => setEditing(false)}>Abbrechen</Button>
+          <Button type="button" variant="secondary" onClick={() => setEditing(false)}>Abbrechen</Button>
+          <Button type="submit" variant="default">Speichern</Button>
         </div>
       </form>
     </Card>
@@ -144,10 +144,10 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
         </CardContent>
       </Link>
       <CardFooter className="flex justify-end gap-2 items-center">
-        <Button size="icon" variant="ghost" className="cursor-pointer" onClick={(e) => { e.preventDefault(); setEditing(true); }}>
+        <Button size="icon" variant="secondary" className="cursor-pointer" onClick={(e) => { e.preventDefault(); setEditing(true); }}>
           <Pencil className="h-4 w-4 text-blue-600" />
         </Button>
-        <Button size="icon" variant="ghost" className="cursor-pointer" onClick={handleDelete}>
+        <Button size="icon" variant="secondary" className="cursor-pointer" onClick={handleDelete}>
           <Trash2 className="h-4 w-4 text-red-500" />
         </Button>
       </CardFooter>

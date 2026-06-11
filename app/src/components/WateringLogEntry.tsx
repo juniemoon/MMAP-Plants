@@ -39,10 +39,10 @@ export default function WateringLogEntry({ log }: WateringLogEntryProps) {
           <Input type="number" name="waterAmount" defaultValue={log.waterAmount ?? ""} placeholder="ml" className="h-8 w-24 text-zinc-700" />
           <Input name="note" defaultValue={log.note ?? ""} placeholder="Notiz" className="h-8 flex-1 text-zinc-700" />
           <div className="flex gap-1">
-            <Button type="submit" size="icon" variant="ghost" className="h-8 w-8 text-green-600 hover:text-green-700">
+            <Button type="submit" size="icon" variant="secondary" className="h-8 w-8 text-green-600 hover:text-green-700">
               <Check className="h-4 w-4" />
             </Button>
-            <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-zinc-400 hover:text-zinc-600" onClick={() => setIsEditing(false)}>
+            <Button type="button" size="icon" variant="secondary" className="h-8 w-8 text-zinc-400 hover:text-zinc-600" onClick={() => setIsEditing(false)}>
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -60,7 +60,7 @@ export default function WateringLogEntry({ log }: WateringLogEntryProps) {
         </p>
         {log.note && <p><span className="font-semibold">Notiz:</span> {log.note}</p>}
       </div>
-      <Button size="icon" variant="ghost" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onClick={() => setIsEditing(true)}>
+      <Button size="icon" variant="secondary" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onClick={() => setIsEditing(true)}>
         <Pencil className="h-3.5 w-3.5 text-blue-600" />
       </Button>
     </div>

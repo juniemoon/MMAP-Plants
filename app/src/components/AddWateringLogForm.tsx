@@ -47,8 +47,8 @@ export default function AddWateringLogForm({ plantId }: { plantId: number }) {
           <Input name="note" id="note" placeholder="Optional: Notiz" className="h-9 focus-visible:ring-blue-400 text-zinc-700" />
         </div>
         <div className="flex justify-end gap-2 mt-2">
-          <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(false)}>Abbrechen</Button>
-          <Button type="submit" size="sm" className="bg-lime-300 hover:bg-lime-400 text-zinc-700">Speichern</Button>
+          <Button type="button" variant="secondary" size="sm" onClick={() => setEditing(false)}>Abbrechen</Button>
+          <Button type="submit" variant="default" size="sm">Speichern</Button>
         </div>
       </form>
     </div>
