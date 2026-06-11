@@ -13,7 +13,8 @@ model Plant {
   image        String @default("/placeholder.jpg")
   status       String @default("unknown")
   location     String
-  watering     String?
+  wateringMinWeeks Float?
+  wateringMaxWeeks Float?
   sunlight     String?
   humidity     Int?
   wateringLogs WateringLog[]
