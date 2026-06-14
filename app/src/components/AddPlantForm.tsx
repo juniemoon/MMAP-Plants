@@ -12,11 +12,14 @@ export default function AddPlantForm() {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("unknown");
   const [illness, setIllness] = useState("");
+  const [hasFile, setHasFile] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+    const file = data.get("image") as File; // Image File aus FormData extrahieren
+
     await createPlant(
       data.get("name") as string,
       data.get("location") as string,
@@ -25,11 +28,13 @@ export default function AddPlantForm() {
       Number(data.get("wateringMaxWeeks")),
       data.get("sunlight") as string,
       Number(data.get("humidity")),
-      undefined, // Image placeholder
+      file, 
       status === "healthy" ? "" : illness
     );
+
     form.reset();
     setIllness("");
+    setHasFile(false);
     setOpen(false);
   }
 
@@ -80,6 +85,19 @@ export default function AddPlantForm() {
 
           <Input required name="sunlight" placeholder="Lichtbedarf" />
           <Input required name="humidity" type="number" placeholder="Luftfeuchtigkeit (%)" />
+          
+          <div className="grid w-full items-center gap-1.5">
+            <span className="pl-1.5 text-zinc-500 cursor-default">Bild auswählen</span>
+            <Input 
+              id="image" 
+              name="image" 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => setHasFile(!!e.target.files?.[0])}
+              className={`file:text-zinc-500 cursor-pointer ${hasFile ? "text-black" : "text-zinc-500"}`}
+            />
+          </div>
+          
           <Select name="status" value={status} onValueChange={(val) => {
             setStatus(val);
             if (val === "healthy") setIllness("");
