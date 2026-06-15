@@ -1,11 +1,21 @@
 "use client";
-
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { updateWateringLog } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Pencil, X, Check } from "lucide-react";
+import { useState } from "react";
+
+const WateringLogEntrySchema = z.object({
+  wateredAt: z.string().optional(),
+  waterAmount: z.number().positive("Menge muss positiv sein").optional().or(z.literal("")),
+  note: z.string().optional(),
+});
+
+type WateringLogEntryInput = z.infer<typeof WateringLogEntrySchema>;
 
 interface WateringLogEntryProps {
   log: {
@@ -19,37 +29,35 @@ interface WateringLogEntryProps {
 export default function WateringLogEntry({ log }: WateringLogEntryProps) {
   const [isEditing, setIsEditing] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const waterAmountRaw = formData.get("waterAmount") as string;
-    const waterAmount = waterAmountRaw ? Number(waterAmountRaw) : undefined;
-    const note = formData.get("note") as string;
-    const wateredAtRaw = formData.get("wateredAt") as string;
-    const wateredAt = wateredAtRaw ? new Date(wateredAtRaw) : undefined;
+  const { register, handleSubmit, formState: { errors } } = useForm<WateringLogEntryInput>({
+    resolver: zodResolver(WateringLogEntrySchema),
+    defaultValues: {
+      wateredAt: new Date(log.wateredAt).toISOString().split("T")[0],
+      waterAmount: log.waterAmount ?? undefined,
+      note: log.note ?? "",
+    },
+  });
 
-    await updateWateringLog(log.id, waterAmount, note, wateredAt);
+  async function onSubmit(data: WateringLogEntryInput) {
+    const waterAmount = data.waterAmount !== "" ? Number(data.waterAmount) : undefined;
+    const wateredAt = data.wateredAt ? new Date(data.wateredAt) : undefined;
+    await updateWateringLog(log.id, waterAmount, data.note || undefined, wateredAt);
     setIsEditing(false);
   }
 
   if (isEditing) {
     return (
-      <form onSubmit={handleSubmit} className="border rounded-xl px-3 py-3 flex flex-col gap-3 bg-zinc-50 transition-all shadow-inner">
+      <form onSubmit={handleSubmit(onSubmit)} className="border rounded-xl px-3 py-3 flex flex-col gap-3 bg-zinc-50 transition-all shadow-inner">
         <div className="grid gap-1">
           <Label htmlFor="wateredAt" className="text-xs text-zinc-500">Datum</Label>
-          <Input 
-            type="date" 
-            name="wateredAt" 
-            id="wateredAt" 
-            defaultValue={new Date(log.wateredAt).toISOString().split('T')[0]} 
-            className="h-8 text-zinc-700 w-fit" 
-          />
+          <Input type="date" {...register("wateredAt")} id="wateredAt" className="h-8 text-zinc-700 w-fit" />
         </div>
         <div className="flex gap-2 items-center">
-          <Label htmlFor="waterAmount" className="text-xs text-zinc-500">Menge:</Label>
-          <Input type="number" name="waterAmount" defaultValue={log.waterAmount ?? ""} placeholder="ml" className="h-8 w-24 text-zinc-700" />
-          <Label htmlFor="note" className="text-xs text-zinc-500">Notiz:</Label>
-          <Input name="note" defaultValue={log.note ?? ""} placeholder="Notiz" className="h-8 flex-1 text-zinc-700" />
+          <Label className="text-xs text-zinc-500">Menge:</Label>
+          <Input type="number" {...register("waterAmount")} placeholder="ml" className="h-8 w-24 text-zinc-700" />
+          {errors.waterAmount && <p className="text-xs text-red-500">{errors.waterAmount.message}</p>}
+          <Label className="text-xs text-zinc-500">Notiz:</Label>
+          <Input {...register("note")} placeholder="Notiz" className="h-8 flex-1 text-zinc-700" />
           <div className="flex gap-1">
             <Button type="submit" size="icon" variant="secondary" className="h-8 w-8 text-green-600 hover:text-green-700">
               <Check className="h-4 w-4" />

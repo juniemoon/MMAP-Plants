@@ -14,8 +14,8 @@ model Plant {
   status           String @default("unknown")
   illness          String?
   location         String
-  wateringMinWeeks Float?
-  wateringMaxWeeks Float?
+  wateringMinWeeks Float
+  wateringMaxWeeks Float
   sunlight         String?
   humidity         Int?
   wateringLogs     WateringLog[]

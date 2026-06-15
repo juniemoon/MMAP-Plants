@@ -3,7 +3,8 @@ import { getPlant } from "@/app/actions";
 import AddWateringLogForm from "@/app/src/components/AddWateringLogForm";
 import { Droplet } from "lucide-react";
 import WateringLogEntry from "@/app/src/components/WateringLogEntry";
-
+import PlantDetailHeader from "@/app/src/components/PlantDetailHeader";
+import { useMemo } from "react";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function PlantDetailPage({ params }: Props) {
@@ -14,6 +15,7 @@ export default async function PlantDetailPage({ params }: Props) {
     notFound();
   }
 
+  // Client-side logic for overdue watering
   const { isOverdue, daysOverdue } = (() => {
     let isOverdue = false;
     let daysOverdue = 0;
@@ -42,30 +44,16 @@ export default async function PlantDetailPage({ params }: Props) {
 
   return (
     <div className="flex flex-col gap-6 text-zinc-700">
-      <h1 className="text-3xl font-semibold text-black">{plant.name}</h1>
-      <div className="flex gap-8 plants-start">
-        <img src={plant.image} alt={plant.name} className="w-48 h-64 object-contain" />
-        <div className="flex flex-col gap-3 text-zinc-700">
-          <p><span className="font-semibold">Standort:</span> {plant.location}</p>
-          <p><span className="font-semibold">Gießen: </span><p className="inline">Alle {plant.wateringMinWeeks} bis {plant.wateringMaxWeeks} Wochen</p></p>
-          <p><span className="font-semibold">Licht:</span> {plant.sunlight}</p>
-          <p><span className="font-semibold">Luftfeuchtigkeit:</span> {plant.humidity}%</p>
-          <p><span className="font-semibold">Status:</span> {statusLabels[plant.status] ?? plant.status}</p>
-          <p><span className="font-semibold">Krankheit/Schädlinge:</span> {plant.illness || "keine"}</p>
-        </div>
-      </div>
-
+      <PlantDetailHeader plant={plant} />
       {isOverdue && (
-        <div className="bg-[#f7b013] text-white px-4 py-2 rounded-lg flex items-center gap-2 self-start font-medium">
-          <Droplet className="h-5 w-5 text-white" /> 
-          {daysOverdue === 0 && ( <span>Gießen heute fällig</span> )}
-          {daysOverdue === 1 && ( <span>Gießen seit 1 Tag überfällig</span> )}
-          {daysOverdue > 1 && ( <span>Gießen seit {daysOverdue} Tagen überfällig</span> )}
+        <div className="bg-[#f7b013] text-white px-4 py-2 rounded-lg flex items-center gap-2 self-start font-medium shadow-sm">
+          <Droplet className="h-5 w-5 text-white" />
+          {daysOverdue === 0 && <span>Gießen heute fällig</span>}
+          {daysOverdue === 1 && <span>Gießen seit 1 Tag überfällig</span>}
+          {daysOverdue > 1 && <span>Gießen seit {daysOverdue} Tagen überfällig</span>}
         </div>
       )}
-
       <AddWateringLogForm plantId={plant.id} />
-
       {plant.wateringLogs.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-black mb-2">Gießprotokoll</h2>

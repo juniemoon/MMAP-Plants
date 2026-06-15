@@ -1,6 +1,9 @@
 "use client";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { createPlant } from "@/app/actions";
+import { PlantSchema, type PlantInput } from "@/schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,26 +13,38 @@ import { Plus } from "lucide-react";
 
 export default function AddPlantForm() {
   const [open, setOpen] = useState(false);
-  const [status, setStatus] = useState("unknown");
-  const [illness, setIllness] = useState("");
+  const [hasFile, setHasFile] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
+  const { register, handleSubmit, control, watch, reset, formState: { errors } } = useForm<PlantInput>({
+    resolver: zodResolver(PlantSchema),
+    defaultValues: {
+      status: "unknown",
+      wateringMinWeeks: 1,
+      wateringMaxWeeks: 2,
+    },
+  });
+
+  const status = watch("status");
+
+  async function onSubmit(data: PlantInput) {
+    const formEl = document.querySelector("form#addPlantForm") as HTMLFormElement;
+    const rawForm = new FormData(formEl);
+    const file = rawForm.get("image") as File;
+
     await createPlant(
-      data.get("name") as string,
-      data.get("location") as string,
-      data.get("status") as string,
-      Number(data.get("wateringMinWeeks")),
-      Number(data.get("wateringMaxWeeks")),
-      data.get("sunlight") as string,
-      Number(data.get("humidity")),
-      undefined, // Image placeholder
-      status === "healthy" ? "" : illness
+      data.name,
+      data.location,
+      data.status,
+      data.wateringMinWeeks,
+      data.wateringMaxWeeks,
+      data.sunlight ?? "",
+      data.humidity ?? 0,
+      file,
+      status === "healthy" ? "" : (data.illness ?? "")
     );
-    form.reset();
-    setIllness("");
+
+    reset();
+    setHasFile(false);
     setOpen(false);
   }
 
@@ -44,65 +59,97 @@ export default function AddPlantForm() {
         <DialogHeader>
           <DialogTitle>Neue Pflanze hinzufügen</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-4">
-          <Input required name="name" placeholder="Name der Pflanze" />
-          <Input required name="location" placeholder="Standort (z.B. Wohnzimmer)" />
-
-          <div className="flex items-center gap-2">
-            <Label htmlFor="wateringMinWeeks" className="whitespace-nowrap pl-1.5">Gießen: Alle</Label>
-            <Select name="wateringMinWeeks" defaultValue="1">
-              <SelectTrigger className="w-[80px]">
-                <SelectValue placeholder="Min" />
-              </SelectTrigger>
-              <SelectContent>
-                {[1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8].map((value) => (
-                  <SelectItem key={value} value={value.toString()}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <span className="whitespace-nowrap">bis</span>
-            <Select name="wateringMaxWeeks" defaultValue="2">
-              <SelectTrigger className="w-[80px]">
-                <SelectValue placeholder="Max" />
-              </SelectTrigger>
-              <SelectContent>
-                {[1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8].map((value) => (
-                  <SelectItem key={value} value={value.toString()}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <span className="whitespace-nowrap">Wochen</span>
+        <form id="addPlantForm" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 py-4">
+          <div className="grid gap-1">
+            <Input {...register("name")} placeholder="Name der Pflanze" />
+            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
           </div>
 
-          <Input required name="sunlight" placeholder="Lichtbedarf" />
-          <Input required name="humidity" type="number" placeholder="Luftfeuchtigkeit (%)" />
-          <Select name="status" value={status} onValueChange={(val) => {
-            setStatus(val);
-            if (val === "healthy") setIllness("");
-          }}>
-            <SelectTrigger>
-              <SelectValue placeholder="Status wählen" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="unknown">Unbekannt</SelectItem>
-              <SelectItem value="healthy">Gesund</SelectItem>
-              <SelectItem value="sick">Krank/Schädlinge</SelectItem>
-              <SelectItem value="recovering">in Genesung</SelectItem>
-              <SelectItem value="critical">Kritisch</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Input 
-            name="illness" 
-            placeholder="Krankheit / Schädlinge" 
-            value={illness}
-            onChange={(e) => setIllness(e.target.value)}
+          <div className="grid gap-1">
+            <Input {...register("location")} placeholder="Standort (z.B. Wohnzimmer)" />
+            {errors.location && <p className="text-xs text-red-500">{errors.location.message}</p>}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap pl-1.5">Gießen: Alle</Label>
+            <Controller
+              control={control}
+              name="wateringMinWeeks"
+              render={({ field }) => (
+                <Select onValueChange={(v) => field.onChange(Number(v))} defaultValue={field.value?.toString()}>
+                  <SelectTrigger className="w-[80px]"><SelectValue placeholder="Min" /></SelectTrigger>
+                  <SelectContent>
+                    {[1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8].map((v) => (
+                      <SelectItem key={v} value={v.toString()}>{v}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <span className="whitespace-nowrap">bis</span>
+            <Controller
+              control={control}
+              name="wateringMaxWeeks"
+              render={({ field }) => (
+                <Select onValueChange={(v) => field.onChange(Number(v))} defaultValue={field.value?.toString()}>
+                  <SelectTrigger className="w-[80px]"><SelectValue placeholder="Max" /></SelectTrigger>
+                  <SelectContent>
+                    {[1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8].map((v) => (
+                      <SelectItem key={v} value={v.toString()}>{v}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <span className="whitespace-nowrap">Wochen</span>
+          </div>
+          {errors.wateringMaxWeeks && <p className="text-xs text-red-500">{errors.wateringMaxWeeks.message}</p>}
+
+          <div className="grid gap-1">
+            <Input {...register("sunlight")} placeholder="Lichtbedarf" />
+            {errors.sunlight && <p className="text-xs text-red-500">{errors.sunlight.message}</p>}
+          </div>
+
+          <div className="grid gap-1">
+            <Input {...register("humidity")} type="number" placeholder="Luftfeuchtigkeit (%)" />
+            {errors.humidity && <p className="text-xs text-red-500">{errors.humidity.message}</p>}
+          </div>
+
+          <div className="grid w-full items-center gap-1.5">
+            <span className="pl-1.5 text-zinc-500 cursor-default">Bild auswählen</span>
+            <Input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setHasFile(!!e.target.files?.[0])}
+              className={`file:text-zinc-500 cursor-pointer ${hasFile ? "text-black" : "text-zinc-500"}`}
+            />
+          </div>
+
+          <Controller
+            control={control}
+            name="status"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger><SelectValue placeholder="Status wählen" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unknown">Unbekannt</SelectItem>
+                  <SelectItem value="healthy">Gesund</SelectItem>
+                  <SelectItem value="sick">Krank/Schädlinge</SelectItem>
+                  <SelectItem value="recovering">in Genesung</SelectItem>
+                  <SelectItem value="critical">Kritisch</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+
+          <Input
+            {...register("illness")}
+            placeholder="Krankheit / Schädlinge"
             disabled={status === "healthy"}
           />
+
           <div className="flex justify-end gap-3 mt-2">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Abbrechen</Button>
             <Button type="submit" variant="default">Speichern</Button>
