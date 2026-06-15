@@ -34,6 +34,14 @@ export default async function PlantDetailPage({ params }: Props) {
     return { isOverdue, daysOverdue };
   })();
 
+  const statusLabels: Record<string, string> = {
+    unknown: "Unbekannt",
+    healthy: "Gesund",
+    sick: "Krank/Schädlinge",
+    recovering: "in Genesung",
+    critical: "Kritisch",
+  };
+
   return (
     <div className="flex flex-col gap-6 text-zinc-700">
       <PlantDetailHeader plant={plant} />
