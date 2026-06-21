@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { deletePlant, updatePlant } from "@/app/actions";
-import type { Plant, WateringLog, FertilizingLog } from "@/generated/prisma/client";
+import type { Plant, WateringLog, FertilizingLog, RepottingLog } from "@/generated/prisma/client";
 import { useState, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Pencil, Trash2, Droplet } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
-export default function PlantCard({ item }: { item: Plant & { wateringLogs: WateringLog[]; fertilizingLogs: FertilizingLog[] } }) {
+export default function PlantCard({ item }: { item: Plant & { wateringLogs: WateringLog[]; fertilizingLogs: FertilizingLog[]; repottingLogs: RepottingLog[] } }) {
   const [editing, setEditing] = useState(false);
 
   const { register, handleSubmit, control, watch, formState: { errors } } = useForm<PlantInput>({

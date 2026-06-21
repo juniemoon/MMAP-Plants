@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import { getPlant } from "@/app/actions";
 import AddWateringLogForm from "@/app/src/components/AddWateringLogForm";
 import AddFertilizingLogForm from "@/app/src/components/AddFertilizingLogForm";
-import { Droplet, Sprout } from "lucide-react";
+import AddRepottingLogForm from "@/app/src/components/AddRepottingLogForm";
+import { Droplet } from "lucide-react";
 import WateringLogEntry from "@/app/src/components/WateringLogEntry";
 import FertilizingLogEntry from "@/app/src/components/FertilizingLogEntry";
+import RepottingLogEntry from "@/app/src/components/RepottingLogEntry";
 import PlantDetailHeader from "@/app/src/components/PlantDetailHeader";
-import { useMemo } from "react";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function PlantDetailPage({ params }: Props) {
@@ -58,6 +59,7 @@ export default async function PlantDetailPage({ params }: Props) {
       <div className="flex flex-col md:flex-row gap-2">
         <AddWateringLogForm plantId={plant.id} />
         <AddFertilizingLogForm plantId={plant.id} />
+        <AddRepottingLogForm plantId={plant.id} />
       </div>
       {plant.wateringLogs.length > 0 && (
         <div>
@@ -75,6 +77,16 @@ export default async function PlantDetailPage({ params }: Props) {
           <div className="flex flex-col gap-2">
             {plant.fertilizingLogs.map((log) => (
               <FertilizingLogEntry key={log.id} log={log} />
+            ))}
+          </div>
+        </div>
+      )}
+      {plant.repottingLogs.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold text-black mb-2">Umtopfprotokoll</h2>
+          <div className="flex flex-col gap-2">
+            {plant.repottingLogs.map((log) => (
+              <RepottingLogEntry key={log.id} log={log} />
             ))}
           </div>
         </div>

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { PlantSchema, WateringLogSchema, FertilizingLogSchema } from "@/schemas";
+import { PlantSchema, WateringLogSchema, FertilizingLogSchema, RepottingLogSchema } from "@/schemas";
 
 // ========================================
 // ============ PLANTS ACTIONS ============
@@ -12,14 +12,14 @@ import { PlantSchema, WateringLogSchema, FertilizingLogSchema } from "@/schemas"
 
 export async function getAllPlants() {
   return prisma.plant.findMany({
-    include: { wateringLogs: { orderBy: { wateredAt: "desc" } }, fertilizingLogs: { orderBy: { fertilizedAt: "desc" } } },
+    include: { wateringLogs: { orderBy: { wateredAt: "desc" } }, fertilizingLogs: { orderBy: { fertilizedAt: "desc" } }, repottingLogs: { orderBy: { repottedAt: "desc" } } },
   });
 }
 
 export async function getPlant(id: number) {
   return prisma.plant.findUnique({
     where: { id },
-    include: { wateringLogs: { orderBy: { wateredAt: "desc" } }, fertilizingLogs: { orderBy: { fertilizedAt: "desc" } } },
+    include: { wateringLogs: { orderBy: { wateredAt: "desc" } }, fertilizingLogs: { orderBy: { fertilizedAt: "desc" } }, repottingLogs: { orderBy: { repottedAt: "desc" } } },
   });
 }
 
@@ -216,4 +216,34 @@ export async function updateFertilizingLog(id: number, fertilizerType?: string, 
 // ========= REPOTTING LOGS ACTIONS =========
 // ==========================================
 
-// tbd
+export async function addRepottingLog(plantId: number, repottedAt?: Date, soilType?: string, oldPotSize?: number, newPotSize?: number, plantDivided?: boolean, note?: string) {
+  RepottingLogSchema.parse({ plantId, repottedAt, soilType, oldPotSize, newPotSize, plantDivided, note });
+
+  await prisma.repottingLog.create({
+    data: {
+      plantId,
+      soilType,
+      oldPotSize,
+      newPotSize,
+      plantDivided,
+      note,
+      ...(repottedAt && { repottedAt }),
+    },
+  });
+  revalidatePath(`/items/${plantId}`);
+}
+
+export async function updateRepottingLog(id: number, repottedAt?: Date, soilType?: string, oldPotSize?: number, newPotSize?: number, plantDivided?: boolean, note?: string) {
+  const log = await prisma.repottingLog.update({
+    where: { id },
+    data: {
+      soilType,
+      oldPotSize,
+      newPotSize,
+      plantDivided,
+      note,
+      ...(repottedAt && { repottedAt }),
+    },
+  });
+  revalidatePath(`/items/${log.plantId}`);
+}

@@ -9,10 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Pencil, Check, X, ImageIcon } from "lucide-react";
-import type { Plant, WateringLog, FertilizingLog } from "@/generated/prisma/client";
+import type { Plant, WateringLog, FertilizingLog, RepottingLog } from "@/generated/prisma/client";
 
 interface PlantDetailHeaderProps {
-  plant: Plant & { wateringLogs: WateringLog[]; fertilizingLogs: FertilizingLog[] };
+  plant: Plant & { wateringLogs: WateringLog[]; fertilizingLogs: FertilizingLog[]; repottingLogs: RepottingLog[] };
 }
 
 export default function PlantDetailHeader({ plant }: PlantDetailHeaderProps) {

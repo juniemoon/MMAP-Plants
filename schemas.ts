@@ -38,3 +38,15 @@ export const FertilizingLogSchema = z.object({
 });
 
 export type FertilizingLogInput = z.infer<typeof FertilizingLogSchema>;
+
+export const RepottingLogSchema = z.object({
+  plantId: z.number(),
+  repottedAt: z.date().optional(),
+  soilType: z.string().optional().nullable(),
+  oldPotSize: z.coerce.number().positive().optional().nullable(),
+  newPotSize: z.coerce.number().positive().optional().nullable(),
+  plantDivided: z.boolean().optional().nullable(),
+  note: z.string().optional().nullable(),
+});
+
+export type RepottingLogInput = z.infer<typeof RepottingLogSchema>;
