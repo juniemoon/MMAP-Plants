@@ -28,3 +28,13 @@ export const WateringLogSchema = z.object({
 });
 
 export type WateringLogInput = z.infer<typeof WateringLogSchema>;
+
+export const FertilizingLogSchema = z.object({
+  plantId: z.number(),
+  fertilizerType: z.string().optional().nullable(),
+  amount: z.string().optional().nullable(),
+  note: z.string().optional().nullable(),
+  fertilizedAt: z.date().optional(),
+});
+
+export type FertilizingLogInput = z.infer<typeof FertilizingLogSchema>;

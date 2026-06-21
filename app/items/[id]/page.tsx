@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { getPlant } from "@/app/actions";
 import AddWateringLogForm from "@/app/src/components/AddWateringLogForm";
-import { Droplet } from "lucide-react";
+import AddFertilizingLogForm from "@/app/src/components/AddFertilizingLogForm";
+import { Droplet, Sprout } from "lucide-react";
 import WateringLogEntry from "@/app/src/components/WateringLogEntry";
+import FertilizingLogEntry from "@/app/src/components/FertilizingLogEntry";
 import PlantDetailHeader from "@/app/src/components/PlantDetailHeader";
 import { useMemo } from "react";
 type Props = { params: Promise<{ id: string }> };
@@ -53,13 +55,26 @@ export default async function PlantDetailPage({ params }: Props) {
           {daysOverdue > 1 && <span>Gießen seit {daysOverdue} Tagen überfällig</span>}
         </div>
       )}
-      <AddWateringLogForm plantId={plant.id} />
+      <div className="flex flex-col md:flex-row gap-2">
+        <AddWateringLogForm plantId={plant.id} />
+        <AddFertilizingLogForm plantId={plant.id} />
+      </div>
       {plant.wateringLogs.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-black mb-2">Gießprotokoll</h2>
           <div className="flex flex-col gap-2">
             {plant.wateringLogs.map((log) => (
               <WateringLogEntry key={log.id} log={log} />
+            ))}
+          </div>
+        </div>
+      )}
+      {plant.fertilizingLogs.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold text-black mb-2">Düngeprotokoll</h2>
+          <div className="flex flex-col gap-2">
+            {plant.fertilizingLogs.map((log) => (
+              <FertilizingLogEntry key={log.id} log={log} />
             ))}
           </div>
         </div>
