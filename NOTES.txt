@@ -1,3 +1,20 @@
+===============================
+LIGHTHOUSE OPTIMIZATION RESULTS
+===============================
+
+Optimierungsversuch: next/image statt <img>
+
+- Umbau nötig wegen next/image-Anforderungen:
+  - Übersichtsseite: Bild in relative-Wrapper + fill
+  - Detailseite: feste width/height statt CSS-Sizing
+
+Ergebnis: Performance verschlechtert: Übersichtsseite −6 Punkte, Detailseite −10 Punkte
+→ Änderungen zurückgesetzt, wieder <img>
+
+Vermutung: 
+Next.js optimiert Bilder im Hintergrund über eine eigene Route, das kostet zusätzlich Zeit, 
+besonders wenn man lokal entwickelt (weil kein Caching/CDN wie später auf dem echten Server). 
+
 ==========
 NEXT TODOs
 ==========

@@ -7,7 +7,7 @@ export const PlantSchema = z.object({
   wateringMinWeeks: z.number().min(0.5, "Mindestens 0.5 Wochen"),
   wateringMaxWeeks: z.number().min(0.5, "Mindestens 0.5 Wochen"),
   sunlight: z.string().min(1, "Lichtbedarf angeben").max(150),
-  humidity: z.number({ error: "Bitte eine Zahl zwischen 0 und 100 eingeben" }).min(0, "Mindestens 0%").max(100, "Maximal 100%"),
+  humidity: z.coerce.number({ error: "Bitte eine Zahl zwischen 0 und 100 eingeben" }).min(0, "Mindestens 0%").max(100, "Maximal 100%"),
   illness: z.string().optional().nullable(),
   image: z.any().optional(),
 }).refine(
@@ -28,3 +28,25 @@ export const WateringLogSchema = z.object({
 });
 
 export type WateringLogInput = z.infer<typeof WateringLogSchema>;
+
+export const FertilizingLogSchema = z.object({
+  plantId: z.number(),
+  fertilizerType: z.string().optional().nullable(),
+  amount: z.string().optional().nullable(),
+  note: z.string().optional().nullable(),
+  fertilizedAt: z.date().optional(),
+});
+
+export type FertilizingLogInput = z.infer<typeof FertilizingLogSchema>;
+
+export const RepottingLogSchema = z.object({
+  plantId: z.number(),
+  repottedAt: z.date().optional(),
+  soilType: z.string().optional().nullable(),
+  oldPotSize: z.coerce.number().positive().optional().nullable(),
+  newPotSize: z.coerce.number().positive().optional().nullable(),
+  plantDivided: z.boolean().optional().nullable(),
+  note: z.string().optional().nullable(),
+});
+
+export type RepottingLogInput = z.infer<typeof RepottingLogSchema>;
