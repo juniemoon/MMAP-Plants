@@ -12,8 +12,8 @@ import { useState } from "react";
 const RepotEntrySchema = z.object({
   repottedAt: z.string().optional(),
   soilType: z.string().optional().nullable(),
-  oldPotSize: z.coerce.number().positive().optional().or(z.literal("")),
-  newPotSize: z.coerce.number().positive().optional().or(z.literal("")),
+  oldPotSize: z.number().positive().optional().nullable(),
+  newPotSize: z.number().positive().optional().nullable(),
   plantDivided: z.boolean().optional().nullable(),
   note: z.string().optional().nullable(),
 });
@@ -39,19 +39,17 @@ export default function RepottingLogEntry({ log }: RepottingLogEntryProps) {
     resolver: zodResolver(RepotEntrySchema),
     defaultValues: {
       repottedAt: new Date(log.repottedAt).toISOString().split("T")[0],
-      soilType: log.soilType ?? "",
+      soilType: log.soilType,
       oldPotSize: log.oldPotSize ?? undefined,
       newPotSize: log.newPotSize ?? undefined,
       plantDivided: log.plantDivided ?? false,
-      note: log.note ?? "",
+      note: log.note,
     },
   });
 
   async function onSubmit(data: RepotEntryInput) {
     const repottedAt = data.repottedAt ? new Date(data.repottedAt) : undefined;
-    const oldPotSize = data.oldPotSize !== "" ? Number(data.oldPotSize) : undefined;
-    const newPotSize = data.newPotSize !== "" ? Number(data.newPotSize) : undefined;
-    await updateRepottingLog(log.id, repottedAt, data.soilType || undefined, oldPotSize, newPotSize, data.plantDivided || undefined, data.note || undefined);
+    await updateRepottingLog(log.id, repottedAt, data.soilType ?? undefined, data.oldPotSize ?? undefined, data.newPotSize ?? undefined, data.plantDivided ?? undefined, data.note ?? undefined);
     setIsEditing(false);
   }
 

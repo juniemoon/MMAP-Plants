@@ -18,7 +18,7 @@ export default function AddPlantForm() {
   const { register, handleSubmit, control, watch, reset, formState: { errors } } = useForm<PlantInput>({
     resolver: zodResolver(PlantSchema),
     defaultValues: {
-      status: "unknown",
+      status: "idk",
       wateringMinWeeks: 1,
       wateringMaxWeeks: 2,
     },
@@ -112,7 +112,6 @@ export default function AddPlantForm() {
 
           <div className="grid gap-1">
             <Input {...register("humidity")} type="number" placeholder="Luftfeuchtigkeit (%)" />
-            {errors.humidity && <p className="text-xs text-red-500">{errors.humidity.message}</p>}
           </div>
 
           <div className="grid w-full items-center gap-1.5">
@@ -134,7 +133,7 @@ export default function AddPlantForm() {
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger><SelectValue placeholder="Status wählen" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="unknown">Unbekannt</SelectItem>
+                  <SelectItem value="idk">Unbekannt</SelectItem>
                   <SelectItem value="healthy">Gesund</SelectItem>
                   <SelectItem value="sick">Krank/Schädlinge</SelectItem>
                   <SelectItem value="recovering">in Genesung</SelectItem>

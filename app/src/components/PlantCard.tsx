@@ -136,7 +136,7 @@ export default function PlantCard({ item }: { item: Plant & { wateringLogs: Wate
             <Select value={field.value} onValueChange={field.onChange}>
               <SelectTrigger><SelectValue placeholder="Status wählen" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="unknown">Unbekannt</SelectItem>
+                <SelectItem value="idk">Unbekannt</SelectItem>
                 <SelectItem value="healthy">Gesund</SelectItem>
                 <SelectItem value="sick">Krank/Schädlinge</SelectItem>
                 <SelectItem value="recovering">in Genesung</SelectItem>

@@ -35,7 +35,7 @@ export default function PlantDetailHeader({ plant }: PlantDetailHeaderProps) {
   const status = watch("status");
 
   const statusLabels: Record<string, string> = {
-    unknown: "Unbekannt",
+    idk: "Unbekannt",
     healthy: "Gesund",
     sick: "Krank/Schädlinge",
     recovering: "in Genesung",
