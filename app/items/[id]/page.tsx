@@ -38,7 +38,7 @@ export default async function PlantDetailPage({ params }: Props) {
   })();
 
   const statusLabels: Record<string, string> = {
-    unknown: "Unbekannt",
+    idk: "Unbekannt",
     healthy: "Gesund",
     sick: "Krank/Schädlinge",
     recovering: "in Genesung",

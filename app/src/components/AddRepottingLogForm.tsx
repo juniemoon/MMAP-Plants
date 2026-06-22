@@ -12,8 +12,8 @@ import { Cylinder } from "lucide-react";
 const RepotSchema = z.object({
   repottedAt: z.string().optional(),
   soilType: z.string().optional().nullable(),
-  oldPotSize: z.coerce.number().positive().optional().nullable(),
-  newPotSize: z.coerce.number().positive().optional().nullable(),
+  oldPotSize: z.number().positive().optional().nullable(),
+  newPotSize: z.number().positive().optional().nullable(),
   plantDivided: z.boolean().optional().nullable(),
   note: z.string().optional().nullable(),
 });
